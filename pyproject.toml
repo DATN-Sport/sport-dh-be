@@ -1,0 +1,23 @@
+[tool.poetry]
+package-mode = false
+name = "dh-sport-be"
+version = "0.1.0"
+description = ""
+authors = ["Dai Hiep <vietgym007@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^5.2.4"
+djangorestframework = "^3.16.0"
+python-dotenv = "^1.1.1"
+djangorestframework-simplejwt = "^5.5.0"
+django-rest-swagger = "^2.2.0"
+drf-yasg = "^1.21.10"
+django-cors-headers = "^4.7.0"
+django-ratelimit = "^4.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
