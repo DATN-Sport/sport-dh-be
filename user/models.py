@@ -6,6 +6,9 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager, PermissionsMixin
 
+from sport_dh.utils.enum_type import RoleSystemEnum
+
+
 # Custom UserManager class
 class CustomUserManager(UserManager):
     def _create_user(self, username, email, password, **extra_fields):
@@ -17,7 +20,7 @@ class CustomUserManager(UserManager):
         if not username:
             raise ValueError('The given username must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, **extra_fields)
+        user = self.model(email=email, username=username, role=RoleSystemEnum.ADMIN.value, **extra_fields)
         user.password = make_password(password)
         user.save(using=self._db)
         return user
@@ -59,6 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=128, null=False, blank=False, unique=True)
     full_name = models.CharField(max_length=128, null=True, blank=False)
     avatar = models.CharField(max_length=256, null=True, blank=False)
+    role = models.CharField(max_length=128, choices=RoleSystemEnum.choices(), default=RoleSystemEnum.USER.value)
     settings = models.JSONField(default=dict, null=True, blank=True)  # Sửa default thành `dict`
     is_active = models.BooleanField(default=False, blank=True)
 
@@ -83,6 +87,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             "is_superuser": self.is_superuser,
             "settings": self.settings,
             "is_active": self.is_active,
+            "role": self.role,
         }
 
     def info(self):
@@ -91,5 +96,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             "email": self.email,
             "username": self.username,
             "full_name": self.full_name,
-            "avatar": self.avatar
+            "avatar": self.avatar,
+            "role": self.role,
         }

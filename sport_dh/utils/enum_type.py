@@ -17,3 +17,9 @@ class EnumType(str, Enum):
 class TypeEmailEnum(EnumType):
     REGISTER = "REGISTER"
     RESET_PASSWORD = "RESET_PASSWORD"
+
+class RoleSystemEnum(EnumType):
+    ADMIN = "ADMIN"
+    OWNER = "OWNER"
+    USER = "USER"
+

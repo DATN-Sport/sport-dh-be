@@ -1,3 +1,3 @@
-from django.shortcuts import render
+from user.view_container.register import *
 
-# Create your views here.
+from user.view_container.user import *
