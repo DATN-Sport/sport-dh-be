@@ -1,7 +1,7 @@
-from user.serializers import (
+from app.user.serializers import (
     UserRegisterSerializer, UserVerifySerializer
 )
-from user.view_container import (
+from app.user.view_container import (
     sent_mail_verification, status,
     User, Response, AppStatus, TypeEmailEnum,
     GenericAPIView, AllowAny

@@ -9,7 +9,7 @@ urlpatterns = [
 
     # path('', include(stadium.router.urls)),
     # path('', include(soccer_field.router.urls)),
-    path('', include('user.routers.user')),
-    path('', include('user.routers.register')),
+    path('', include('app.user.routers.user')),
+    path('', include('app.user.routers.register')),
 
 ]

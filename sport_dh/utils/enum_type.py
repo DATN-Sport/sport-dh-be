@@ -18,8 +18,20 @@ class TypeEmailEnum(EnumType):
     REGISTER = "REGISTER"
     RESET_PASSWORD = "RESET_PASSWORD"
 
+
 class RoleSystemEnum(EnumType):
     ADMIN = "ADMIN"
     OWNER = "OWNER"
     USER = "USER"
 
+
+class StatusFieldEnum(EnumType):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+
+class StatusBookingEnum(EnumType):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
+    COMPLETED = "COMPLETED"
