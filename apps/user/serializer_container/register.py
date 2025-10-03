@@ -1,6 +1,6 @@
-from app.user.models import User
-from app.user.serializer_container.user import UserDetailSerializer
-from app.user.serializer_container import (
+from apps.user.models import User
+from apps.user.serializer_container.user import UserDetailSerializer
+from apps.user.serializer_container import (
     serializers, AppStatus, make_password, RefreshToken
 )
 

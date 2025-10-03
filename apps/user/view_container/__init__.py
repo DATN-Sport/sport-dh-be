@@ -22,7 +22,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.generics import GenericAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, UpdateAPIView
 
-from app.user.models import *
+from apps.user.models import *
 from sport_dh.utils.constant_status import AppStatus
 from sport_dh.utils.dynamic_param import DynamicQueryParams
 from sport_dh.utils.send_mail import sent_mail_verification, TypeEmailEnum

@@ -1,7 +1,7 @@
 from django.db import models
 
-from app.sport_center.models import SportField
-from app.user.models import User
+from apps.sport_center.models import SportField
+from apps.user.models import User
 from sport_dh.utils.enum_type import StatusBookingEnum
 
 

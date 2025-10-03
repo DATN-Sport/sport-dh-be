@@ -1,4 +1,4 @@
-from app.user.serializer_container import (
+from apps.user.serializer_container import (
     AppStatus, serializers, TokenObtainPairSerializer, TokenRefreshSerializer, RefreshToken, authenticate, Dict, Any
 )
 

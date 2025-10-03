@@ -50,9 +50,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'corsheaders',
-    'app.user',
-    'app.sport_center',
-    'app.booking',
+    'apps.user',
+    'apps.sport_center',
+    'apps.booking',
 ]
 
 MIDDLEWARE = [

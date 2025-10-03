@@ -1,6 +1,6 @@
-from app.user.routers import *
+from apps.user.routers import *
 
-from app.user.views import (
+from apps.user.views import (
     UserDetailViewSet,
 )
 

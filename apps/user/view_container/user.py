@@ -1,7 +1,7 @@
-from app.user.serializers import (
+from apps.user.serializers import (
     UserDetailSerializer
 )
-from app.user.view_container import (
+from apps.user.view_container import (
     Response, permissions, APIView, swagger_auto_schema
 )
 

@@ -1,5 +1,5 @@
-from app.user.models import User
-from app.user.serializer_container import serializers
+from apps.user.models import User
+from apps.user.serializer_container import serializers
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
