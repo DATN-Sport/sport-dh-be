@@ -1,8 +1,12 @@
+from rest_framework.exceptions import PermissionDenied
+
 from apps.user.serializers import (
-    UserDetailSerializer
+    UserDetailSerializer, serializers
 )
 from apps.user.view_container import (
-    Response, permissions, APIView, swagger_auto_schema
+    Response, permissions, APIView, swagger_auto_schema, mixins, IsUser, IsAdmin, IsOwner, ModelViewSet,
+    LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, GenericViewSet,
+    User, RoleSystemEnum, AppStatus, UserFilter
 )
 
 
@@ -17,12 +21,49 @@ class UserDetailViewSet(APIView):
             401: 'Unauthorized - Cần đăng nhập'
         },
         security=[{'Basic': []}, {'Bearer': []}],
-        tags=['User']
+        tags=['user']
     )
     def get(self, request, *args, **kwargs):
         serializer = UserDetailSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
-#
-# class UserAdminListViewSet(APIView):
-#     permission_classes = [permissions.]
+
+class UserViewSet(ModelViewSet):
+    permission_classes = [IsUser]
+    queryset = User.objects.all()
+    pagination_class = LimitOffsetPagination
+    parser_classes = [MultiPartParser, FormParser]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = UserFilter
+    ordering_fields = ['username', 'email', 'created_at']
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            pass
+        return UserDetailSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset
+        user = request.user
+
+        if user.role != RoleSystemEnum.ADMIN.value:
+            raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+
+
+
+

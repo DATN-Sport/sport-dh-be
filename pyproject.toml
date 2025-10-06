@@ -16,7 +16,7 @@ django-rest-swagger = "^2.2.0"
 drf-yasg = "^1.21.10"
 django-cors-headers = "^4.7.0"
 django-ratelimit = "^4.1.0"
-
+django_filter = "25.2"
 
 [build-system]
 requires = ["poetry-core"]

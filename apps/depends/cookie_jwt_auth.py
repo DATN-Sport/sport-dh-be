@@ -2,11 +2,9 @@
 Cookie-based JWT Authentication for Django REST Framework
 """
 from django.conf import settings
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework import HTTP_HEADER_ENCODING
 from django.utils.module_loading import import_string
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 
 class CookieJWTAuthentication(JWTAuthentication):
