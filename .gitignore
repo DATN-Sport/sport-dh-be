@@ -25,6 +25,7 @@ logs
 # Distribution / packaging
 /blog-env/Lib/site-packages
 .Python
+media/
 build/
 develop-eggs/
 dist/

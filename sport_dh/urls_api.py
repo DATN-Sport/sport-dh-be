@@ -12,4 +12,5 @@ urlpatterns = [
     # path('', include(stadium.router.urls)),
     # path('', include(soccer_field.router.urls)),
     path('', include('apps.user.urls')),
+    path('', include('apps.sport_center.urls')),
 ]

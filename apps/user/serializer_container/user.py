@@ -40,7 +40,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['full_name', 'address', 'device_tokens', 'avatar_upload', 'avatar_url']
+        fields = ['full_name', 'address', 'role', 'device_tokens', 'avatar_upload', 'avatar_url']
 
     @staticmethod
     def get_avatar_url(obj):

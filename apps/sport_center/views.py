@@ -1,3 +1,1 @@
-from django.shortcuts import render
-
-# Create your views here.
+from apps.sport_center.view_container.sport_center import *
