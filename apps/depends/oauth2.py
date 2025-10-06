@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from sport_dh.utils.enum_type import RoleSystemEnum
+from apps.utils.enum_type import RoleSystemEnum
 
 
 class IsAdmin(permissions.BasePermission):

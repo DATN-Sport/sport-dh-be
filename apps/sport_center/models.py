@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 from apps.user.models import User
-from sport_dh.utils.enum_type import StatusFieldEnum
+from apps.utils.enum_type import StatusFieldEnum
 
 
 class SportCenter(models.Model):

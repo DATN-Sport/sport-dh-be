@@ -160,3 +160,6 @@ dummy
 
 /test
 test
+
+# Documentation agent folder
+docs_agent/

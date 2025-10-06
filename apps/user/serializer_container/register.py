@@ -1,7 +1,7 @@
 from apps.user.models import User
 from apps.user.serializer_container.user import UserDetailSerializer
 from apps.user.serializer_container import (
-    serializers, AppStatus, make_password, RefreshToken
+    serializers, AppStatus, make_password, RefreshToken, validate_create_user
 )
 
 
@@ -11,18 +11,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'full_name', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True, "min_length": 8}}
 
+
+
     def create(self, validated_data):
-        user = User.objects.filter(username=validated_data["username"]).first()
-
-        if user:
-            raise serializers.ValidationError(AppStatus.USERNAME_ALREADY_EXIST.message)
-        user = User.objects.filter(email=validated_data["email"]).first()
-        if user:
-            raise serializers.ValidationError(AppStatus.EMAIL_ALREADY_EXIST.message)
-
+        validate_create_user(validated_data)
         password = validated_data.pop('password')
         hashed_password = make_password(password)
-
         instance = super().create({**validated_data, 'password': hashed_password,
                                    'full_name': validated_data['username'], 'is_active': False})
         return instance

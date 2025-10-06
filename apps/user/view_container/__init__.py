@@ -28,9 +28,9 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.generics import GenericAPIView, RetrieveAPIView, ListAPIView, CreateAPIView, UpdateAPIView
 
 from apps.user.models import *
-from sport_dh.utils.constant_status import Enum
-from sport_dh.utils.constant_status import AppStatus
+from apps.utils.constant_status import Enum
+from apps.utils.constant_status import AppStatus
 from apps.depends.oauth2 import IsAdmin, IsOwner, IsUser
-from sport_dh.utils.dynamic_param import DynamicQueryParams
+from apps.utils.dynamic_param import DynamicQueryParams
 from apps.user.view_container.filter_user import UserFilter
-from sport_dh.utils.send_mail import sent_mail_verification, TypeEmailEnum
+from apps.utils.send_mail import sent_mail_verification, TypeEmailEnum

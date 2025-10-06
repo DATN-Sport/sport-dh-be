@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager, PermissionsMixin
 
-from sport_dh.utils.enum_type import RoleSystemEnum
+from apps.utils.enum_type import RoleSystemEnum
 
 
 # Custom UserManager class
@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=128, choices=RoleSystemEnum.choices(), default=RoleSystemEnum.USER.value)
     settings = models.JSONField(default=dict, null=True, blank=True)  # Sửa default thành `dict`
     is_active = models.BooleanField(default=False, blank=True)
+    address = models.CharField(max_length=256, null=True, blank=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']  # Bổ sung `email` để `createsuperuser` yêu cầu email

@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
 
-from sport_dh.utils.enum_type import TypeEmailEnum
+from apps.utils.enum_type import TypeEmailEnum
 
 
 class TemplateMail(object):
