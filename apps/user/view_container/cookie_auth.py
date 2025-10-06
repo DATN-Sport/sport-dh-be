@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
-from sport_dh.utils.cookie_utils import set_jwt_cookies, clear_jwt_cookies
+from apps.utils.cookie_utils import set_jwt_cookies, clear_jwt_cookies
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')

@@ -1,7 +1,6 @@
 from apps.user.serializer_container import (
     AppStatus, serializers, TokenObtainPairSerializer, TokenRefreshSerializer, RefreshToken, authenticate, Dict, Any
 )
-from sport_dh.utils.cookie_utils import set_jwt_cookies
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
