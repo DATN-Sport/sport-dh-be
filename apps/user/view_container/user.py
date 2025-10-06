@@ -22,3 +22,7 @@ class UserDetailViewSet(APIView):
     def get(self, request, *args, **kwargs):
         serializer = UserDetailSerializer(request.user, context={'request': request})
         return Response(serializer.data)
+
+#
+# class UserAdminListViewSet(APIView):
+#     permission_classes = [permissions.]
