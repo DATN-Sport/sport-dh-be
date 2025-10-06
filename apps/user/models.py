@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=128, blank=True)
     username = models.CharField(max_length=128, null=False, blank=False, unique=True)
     full_name = models.CharField(max_length=128, null=True, blank=False)
-    avatar = models.CharField(max_length=256, null=True, blank=False)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=False)
     role = models.CharField(max_length=128, choices=RoleSystemEnum.choices(), default=RoleSystemEnum.USER.value)
     settings = models.JSONField(default=dict, null=True, blank=True)  # Sửa default thành `dict`
     is_active = models.BooleanField(default=False, blank=True)

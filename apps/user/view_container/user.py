@@ -1,10 +1,8 @@
-from rest_framework import status
-
 from apps.user.serializers import (
-    serializers, UserDetailSerializer, UserCreateSerializer
+    serializers, UserDetailSerializer, UserCreateSerializer, UserUpdateSerializer, UserSettingUpdateSerializer
 )
 from apps.user.view_container import (
-    Response, permissions, APIView, swagger_auto_schema, IsUser, ModelViewSet,
+    Response, permissions, APIView, swagger_auto_schema, IsUser, ModelViewSet, action, status,
     LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, User, RoleSystemEnum,
     AppStatus, UserFilter
 )
@@ -39,8 +37,12 @@ class UserViewSet(ModelViewSet):
     ordering = ('-created_at',)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
+        if self.action == 'create':
             return UserCreateSerializer
+        elif self.action in ['update']:
+            return UserUpdateSerializer
+        elif self.action == 'update_settings':
+            return UserSettingUpdateSerializer
         return UserDetailSerializer
 
     def retrieve(self, request, *args, **kwargs):
@@ -49,6 +51,18 @@ class UserViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @action(
+        detail=False,
+        methods=['put'],
+        url_path='update/settings/',
+    )
+    @swagger_auto_schema(
+        request_body=UserSettingUpdateSerializer,
+        responses={200: UserDetailSerializer()}
+    )
+    def update_settings(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         if request.user.role != RoleSystemEnum.ADMIN.value:
