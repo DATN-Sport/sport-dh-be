@@ -5,7 +5,8 @@ from apps.user.views import (
     RegisterViewSet,
     VerifyCodeViewSet,
     UserDetailViewSet,
-    UserViewSet
+    UserViewSet,
+    ChatbotViewSet
 )
 
 router_user = routers.DefaultRouter(trailing_slash=False)
@@ -16,7 +17,7 @@ urlpatterns = [
     path('auth/veryfi_code/', VerifyCodeViewSet.as_view(), name='verify-code'),
     path('user/me/', UserDetailViewSet.as_view(), name='user-detail'),
     path('user/', include(router_user.urls)),
-
+    path('chatbot/', ChatbotViewSet.as_view(), name='chatbot'),
 ]
 
 
