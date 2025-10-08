@@ -1,5 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from apps.user.models import User
@@ -42,3 +44,11 @@ class SportField(models.Model):
             "price": self.price,
             "status": self.status,
         }
+
+
+class ImageSport(models.Model):
+    file = models.ImageField(upload_to='images/')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
