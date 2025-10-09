@@ -35,3 +35,9 @@ class StatusBookingEnum(EnumType):
     CONFIRMED = "CONFIRMED"
     CANCELLED = "CANCELLED"
     COMPLETED = "COMPLETED"
+
+class SportTypeEnum(EnumType):
+    FOOTBALL = "FOOTBALL"
+    BADMINTON = "BADMINTON"
+    TENNIS = "TENNIS"
+    PICK_A_BALL = "PICK_A_BALL"

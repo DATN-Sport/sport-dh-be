@@ -1,8 +1,8 @@
-from apps.sport_center.models import SportCenter, ImageSport
+from apps.sport_center.models import SportField, ImageSport
 from apps.sport_center.serializers import (
-    serializers, SportCenterDetailSerializer, SportCenterSerializer, delete_sport_images
+    serializers, SportFieldDetailSerializer, SportFieldSerializer, delete_sport_images
 )
-from apps.sport_center.view_container.filter import SportCenterFilter
+from apps.sport_center.view_container.filter import SportFieldFilter
 from apps.user.view_container import (
     Response, swagger_auto_schema, IsUser, ModelViewSet, status,
     LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, RoleSystemEnum,
@@ -10,20 +10,20 @@ from apps.user.view_container import (
 )
 
 
-class SportCenterViewSet(ModelViewSet):
+class SportFieldViewSet(ModelViewSet):
     permission_classes = [IsUser]
-    queryset = SportCenter.objects.all()
+    queryset = SportField.objects.all()
     pagination_class = LimitOffsetPagination
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_class = SportCenterFilter
-    ordering_fields = ['name', 'address', 'created_at']
+    filterset_class = SportFieldFilter
+    ordering_fields = ['name', 'address', 'price', 'created_at']
     ordering = ('-created_at',)
 
     def get_serializer_class(self):
         if self.action in ['create', 'update']:
-            return SportCenterSerializer
-        return SportCenterDetailSerializer
+            return SportFieldSerializer
+        return SportFieldDetailSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -60,13 +60,13 @@ class SportCenterViewSet(ModelViewSet):
         if request.user.role != RoleSystemEnum.ADMIN.value and request.user != instance.owner:
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
         instance.delete()
-        delete_sport_images(instance, SportCenter)
+        delete_sport_images(instance, SportField)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        sport_center_ids = queryset.values_list('id', flat=True)
-        images = ImageSport.objects.filter(object_id__in=sport_center_ids).values('object_id', 'file')
+        sport_field_ids = queryset.values_list('id', flat=True)
+        images = ImageSport.objects.filter(object_id__in=sport_field_ids).values('object_id', 'file')
         image_map = {}
         for img in images:
             image_map.setdefault(img['object_id'], []).append(img['file'])

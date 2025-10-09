@@ -13,14 +13,14 @@ class AppStatus(Enum):
     EMAIL_NOT_EXIST = "EMAIL_NOT_EXIST", 400, "Email not exist."
     NOT_REFRESH = "NOT_REFRESH", 400, "Refresh token is required."
     PERMISSION_DENIED = "PERMISSION_DENIED", 400, "Permission denied."
-    STADIUM_NOT_EXIST = "STADIUM_NOT_EXIST", 400, "Stadium not exist."
-    SOCCER_FIELD_NOT_EXIST = "SOCCER_FIELD_NOT_EXIST", 400, "Soccer field not exist."
     INVALID_VERIFY_CODE = "INVALID_VERIFY_CODE", 400, "Invalid verification code."
     EMAIL_ALREADY_EXIST = "EMAIL_ALREADY_EXIST", 400, "User with email already exists."
     USERNAME_ALREADY_EXIST = "USERNAME_ALREADY_EXIST", 400, "User with username already exists."
 
     SPORT_CENTER_WITH_INFO_EXIST = "SPORT_CENTER_WITH_INFO_EXIST", 400, "Sport center with this info exist."
     OWNER_SPORT_CENTER_MUST_ROLE_OWNER = "OWNER_SPORT_CENTER_MUST_ROLE_OWNER", 400, "Owner sport center must role owner."
+
+    SPORT_FIELD_WITH_INFO_EXIST = "SPORT_FIELD_WITH_INFO_EXIST", 400, "Sport field with this info exist."
 
     ENTER_USERNAME_OR_EMAIL = "ENTER_USERNAME_OR_EMAIL", 400, "Please enter the username or email."
     USERNAME_OR_PASSWORD_INCORRECT = "USERNAME_OR_PASSWORD_INCORRECT", 400, "Username or password is incorrect."
