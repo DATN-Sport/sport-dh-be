@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from apps.user.models import User
-from apps.utils.enum_type import StatusFieldEnum
+from apps.utils.enum_type import StatusFieldEnum, SportTypeEnum
 
 
 class SportCenter(models.Model):
@@ -28,7 +28,7 @@ class SportField(models.Model):
     sport_center = models.ForeignKey(SportCenter, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, null=False, blank=True)
     address = models.CharField(max_length=255, null=False, blank=True)
-    sport_type = models.CharField(max_length=255, null=False, blank=True)
+    sport_type = models.CharField(max_length=255, choices=SportTypeEnum.choices(), default=SportTypeEnum.FOOTBALL)
     price = models.FloatField(null=False, blank=False)
     status = models.CharField(max_length=255, choices=StatusFieldEnum.choices(), default=StatusFieldEnum.INACTIVE)
 

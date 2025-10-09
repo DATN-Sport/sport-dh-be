@@ -1,11 +1,33 @@
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
-from rest_framework import status
 
 from apps.sport_center.models import SportCenter, ImageSport
 from apps.user.serializer_container import (
-    serializers, RoleSystemEnum, AppStatus, make_password, validate_create_user, settings, Response
+    Q, serializers, RoleSystemEnum, AppStatus, Response, status, os, settings
 )
+
+
+def delete_sport_images(instance, instance_model):
+    instance_ct = ContentType.objects.get_for_model(instance_model)
+    # Get all ImageSport records related to this SportCenter
+    image_sports = ImageSport.objects.filter(
+        content_type=instance_ct,
+        object_id=instance.id
+    )
+    # Delete media files and ImageSport records
+    for image_sport in image_sports:
+        if image_sport.file:
+            # Get the full path to the file
+            file_path = os.path.join(settings.MEDIA_ROOT, str(image_sport.file))
+
+            # Delete the file if it exists
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except OSError as e:
+                    # Log the error but continue with deletion
+                    print(f"Error deleting file {file_path}: {e}")
+
+        image_sport.delete()
 
 
 class SportCenterDetailSerializer(serializers.ModelSerializer):
@@ -35,7 +57,6 @@ class SportCenterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(AppStatus.SPORT_CENTER_WITH_INFO_EXIST.message)
         if validated_data["owner"].role not in [RoleSystemEnum.ADMIN.value, RoleSystemEnum.OWNER.value]:
             raise serializers.ValidationError(AppStatus.OWNER_SPORT_CENTER_MUST_ROLE_OWNER.message)
-        return
 
     @staticmethod
     def save_image(images, obj_model, object_id):
@@ -56,4 +77,7 @@ class SportCenterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
         images = self.context['request'].FILES.getlist('images')
         self.save_image(images, SportCenter, instance.id)
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
         return Response(status=status.HTTP_200_OK)
