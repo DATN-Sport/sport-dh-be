@@ -8,8 +8,6 @@ urlpatterns = [
     path("auth/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("auth/refresh/", CookieTokenRefreshView.as_view(), name="token_refresh"),
     path("auth/logout/", LogoutView.as_view(), name="logout_api"),
-    # path('', include(stadium.router.urls)),
-    # path('', include(soccer_field.router.urls)),
     path('', include('apps.user.urls')),
     path('', include('apps.sport_center.urls')),
 ]

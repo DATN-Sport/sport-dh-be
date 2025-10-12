@@ -147,12 +147,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "user.User"
 
 CORS_ORIGIN_ALLOW_ALL = True
-
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://index-dh.daihiep.click'
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://index-dh.daihiep.click",
 ]
+
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'Content-Range'
@@ -160,9 +162,10 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 # CSRF settings for cookie-based authentication
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://index-dh.daihiep.click'
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://index-dh.daihiep.click",
 ]
 CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'  # Set to True in production
 CSRF_COOKIE_HTTPONLY = True
