@@ -29,6 +29,11 @@ class SportFieldSerializer(serializers.ModelSerializer):
         if user.role != RoleSystemEnum.ADMIN.value and user != sport_center.owner:
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
 
+    def validate_update(self, instance):
+        user = self.context['request'].user
+        if user.role != RoleSystemEnum.ADMIN.value and user != instance.sport_center.owner:
+            raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
+
     def validate_create(self, validated_data):
         self.validate_permission(validated_data)
         sport_field = SportField.objects.filter(name=validated_data["name"], sport_center=validated_data["sport_center"])
@@ -51,7 +56,7 @@ class SportFieldSerializer(serializers.ModelSerializer):
         return sport_field
 
     def update(self, instance, validated_data):
-        self.validate_permission(validated_data)
+        self.validate_update(instance)
         images = self.context['request'].FILES.getlist('images')
         self.save_image(images, SportField, instance.id)
         for field, value in validated_data.items():

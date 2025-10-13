@@ -51,8 +51,15 @@ class SportFieldViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        images = ImageSport.objects.filter(object_id=instance.id).values('file')
-        serializer = self.get_serializer(instance, context={'image_map': images})
+        images = ImageSport.objects.filter(object_id=instance.id).values('id', 'file')
+        image_map = {}
+        for img in images:
+            image_info = {
+                'id': img['id'],
+                'file': img['file']
+            }
+            image_map.setdefault(instance.id, []).append(image_info)
+        serializer = self.get_serializer(instance, context={'image_map': image_map})
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
