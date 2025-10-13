@@ -11,7 +11,7 @@ class IsOwner(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user.is_authenticated and
                     request.user.role in [
-                        RoleSystemEnum.USER,
+                        RoleSystemEnum.ADMIN,
                         RoleSystemEnum.OWNER,
                     ])
 
