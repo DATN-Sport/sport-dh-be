@@ -1,12 +1,12 @@
 from apps.sport_center.models import SportCenter, ImageSport
 from apps.sport_center.serializers import (
-    serializers, SportCenterDetailSerializer, SportCenterSerializer, delete_sport_images
+    serializers, SportCenterDetailSerializer, SportCenterSerializer, ImageSportDeleteSerializer, delete_sport_images
 )
 from apps.sport_center.view_container.filter import SportCenterFilter
 from apps.user.view_container import (
-    Response, swagger_auto_schema, IsUser, ModelViewSet, status,
+    Response, swagger_auto_schema, IsUser, IsOwner, ModelViewSet, status,
     LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, RoleSystemEnum,
-    AppStatus, openapi
+    AppStatus, openapi, DestroyAPIView
 )
 
 
@@ -66,10 +66,14 @@ class SportCenterViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         sport_center_ids = queryset.values_list('id', flat=True)
-        images = ImageSport.objects.filter(object_id__in=sport_center_ids).values('object_id', 'file')
+        images = ImageSport.objects.filter(object_id__in=sport_center_ids).values('id', 'object_id', 'file')
         image_map = {}
         for img in images:
-            image_map.setdefault(img['object_id'], []).append(img['file'])
+            image_info = {
+                'id': img['id'],
+                'file': img['file']
+            }
+            image_map.setdefault(img['object_id'], []).append(image_info)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -78,3 +82,17 @@ class SportCenterViewSet(ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True, context={'image_map': image_map})
         return Response(serializer.data)
+
+
+class ImageSportDeleteViewSet(DestroyAPIView):
+    queryset = ImageSport.objects.all()
+    Permission_classes = [IsOwner]
+    serializer_class = ImageSportDeleteSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.delete(instance)
+        return Response({"detail": "Image deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+

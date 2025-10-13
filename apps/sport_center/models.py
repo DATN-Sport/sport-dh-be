@@ -29,7 +29,7 @@ class SportField(models.Model):
     name = models.CharField(max_length=255, null=False, blank=True)
     address = models.CharField(max_length=255, null=False, blank=True)
     sport_type = models.CharField(max_length=255, choices=SportTypeEnum.choices(), default=SportTypeEnum.FOOTBALL)
-    price = models.FloatField(null=False, blank=False)
+    price = models.FloatField(null=False, blank=True)
     status = models.CharField(max_length=255, choices=StatusFieldEnum.choices(), default=StatusFieldEnum.INACTIVE)
 
     created_at = models.DateTimeField(auto_now_add=True)

@@ -16,8 +16,9 @@ from rest_framework import (viewsets, mixins, status, permissions, generics)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import OrderingFilter
+from rest_framework.generics import DestroyAPIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
