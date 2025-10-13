@@ -31,7 +31,7 @@ class SportFieldSerializer(serializers.ModelSerializer):
 
     def validate_create(self, validated_data):
         self.validate_permission(validated_data)
-        sport_field = SportField.objects.filter(name=validated_data["name"])
+        sport_field = SportField.objects.filter(name=validated_data["name"], sport_center=validated_data["sport_center"])
         if sport_field:
             raise serializers.ValidationError(AppStatus.SPORT_FIELD_WITH_INFO_EXIST.message)
         return validated_data

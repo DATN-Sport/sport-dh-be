@@ -59,9 +59,9 @@ class SportFieldViewSet(ModelViewSet):
         instance = self.get_object()
         if request.user.role != RoleSystemEnum.ADMIN.value and request.user != instance.owner:
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
-        instance.delete()
         delete_sport_images(instance, SportField)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        instance.delete()
+        return Response({"detail": "Sport Field deleted successfully"}, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
