@@ -8,14 +8,25 @@ from apps.user.serializer_container import (
 
 class SportFieldDetailSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
+    center_info = serializers.SerializerMethodField()
 
     class Meta:
         model = SportField
-        fields = ['id', 'sport_center', 'images', 'name', 'address', 'sport_type', 'price', 'status', 'created_at']
+        fields = ['id', 'sport_center', 'center_info', 'images', 'name', 'address', 'sport_type', 'price',
+                  'status', 'created_at']
 
     def get_images(self, obj):
         image_map = self.context.get('image_map', {})
         return image_map.get(obj.id, [])
+
+    @staticmethod
+    def get_center_info(obj):
+        if obj.sport_center:
+            return {
+                'name': obj.sport_center.name,
+                'address': obj.sport_center.address
+            }
+        return {}
 
 
 class SportFieldSerializer(serializers.ModelSerializer):

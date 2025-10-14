@@ -8,6 +8,7 @@ from apps.user.view_container import (
     LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, RoleSystemEnum,
     AppStatus, openapi, DestroyAPIView
 )
+from apps.utils.mapping_data import MappingData
 
 
 class SportCenterViewSet(ModelViewSet):
@@ -51,11 +52,12 @@ class SportCenterViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        images = ImageSport.objects.filter(object_id=instance.id).values('id', 'file')
+        images = ImageSport.objects.filter(object_id=instance.id).values('id', 'preview', 'file')
         image_map = {}
         for img in images:
             image_info = {
                 'id': img['id'],
+                'preview': img['preview'],
                 'file': img['file']
             }
             image_map.setdefault(instance.id, []).append(image_info)
@@ -72,22 +74,21 @@ class SportCenterViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        sport_center_ids = queryset.values_list('id', flat=True)
-        images = ImageSport.objects.filter(object_id__in=sport_center_ids).values('id', 'object_id', 'file')
-        image_map = {}
-        for img in images:
-            image_info = {
-                'id': img['id'],
-                'file': img['file']
-            }
-            image_map.setdefault(img['object_id'], []).append(image_info)
-
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = self.get_serializer(page, many=True, context={'image_map': image_map})
-            return self.get_paginated_response(serializer.data)
+            sport_center_ids = [obj.id for obj in page]
+        else:
+            sport_center_ids = list(queryset.values_list('id', flat=True))
 
-        serializer = self.get_serializer(queryset, many=True, context={'image_map': image_map})
+        images = (ImageSport.objects.filter(object_id__in=sport_center_ids)
+                  .values('id', 'object_id', 'preview', 'file'))
+        image_map = MappingData(obj_images=images).mapping_img()
+
+        serializer = self.get_serializer(
+            page if page is not None else queryset, many=True, context={'image_map': image_map})
+
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
 
 

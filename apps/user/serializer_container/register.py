@@ -18,7 +18,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         hashed_password = make_password(password)
         instance = super().create({**validated_data, 'password': hashed_password,
-                                   'full_name': validated_data['username'], 'is_active': False})
+                                   'full_name': validated_data['username'], 'is_active': True})
         return instance
 
 

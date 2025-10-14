@@ -1,3 +1,1 @@
-from django.shortcuts import render
-
-# Create your views here.
+from apps.booking.view_container.rental_slot import *

@@ -50,7 +50,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user = self.context['request'].user
-        if user.role != RoleSystemEnum.ADMIN.value:
+        if user.role != RoleSystemEnum.ADMIN.value and user.id != instance.id:
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
 
         avatar_file = validated_data.pop('avatar_upload', None)
