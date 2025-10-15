@@ -28,10 +28,10 @@ class BookingConfig(AppConfig):
                 return
 
             for slot in generate_time_slots("06:30", "22:30"):
-                RentalSlot.objects.get_or_create(name="football", time_slot=slot)
+                RentalSlot.objects.get_or_create(name="FOOTBALL", time_slot=slot)
 
             for slot in generate_time_slots("08:00", "20:00"):
-                RentalSlot.objects.get_or_create(name="sport", time_slot=slot)
+                RentalSlot.objects.get_or_create(name="SPORT", time_slot=slot)
 
             print("✅ RentalSlot default data created successfully.")
 

@@ -26,7 +26,7 @@ class Booking(models.Model):
     rental_slot = models.ForeignKey(RentalSlot, null=False, blank=True, on_delete=models.CASCADE)
 
     price = models.FloatField(null=False, blank=False)
-    booking_date = models.DateField(null=False, blank=False)
+    booking_date = models.DateField(null=False, blank=True)
     status = models.CharField(max_length=255, choices=StatusBookingEnum.choices(), default=StatusBookingEnum.PENDING)
 
     created_at = models.DateTimeField(auto_now_add=True)
