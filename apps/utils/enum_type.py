@@ -33,7 +33,6 @@ class StatusFieldEnum(EnumType):
 class StatusBookingEnum(EnumType):
     PENDING = "PENDING"
     CONFIRMED = "CONFIRMED"
-    CANCELLED = "CANCELLED"
     COMPLETED = "COMPLETED"
 
 class SportTypeEnum(EnumType):

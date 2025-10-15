@@ -21,6 +21,7 @@ class AppStatus(Enum):
     OWNER_SPORT_CENTER_MUST_ROLE_OWNER = "OWNER_SPORT_CENTER_MUST_ROLE_OWNER", 400, "Owner sport center must role owner."
 
     SPORT_FIELD_WITH_INFO_EXIST = "SPORT_FIELD_WITH_INFO_EXIST", 400, "Sport field with this info exist."
+    NO_ACTIVE_SPORT_FIELDS_FOUND = "NO_ACTIVE_SPORT_FIELDS_FOUND", 400, "No active sport fields found for this center."
 
     ENTER_USERNAME_OR_EMAIL = "ENTER_USERNAME_OR_EMAIL", 400, "Please enter the username or email."
     USERNAME_OR_PASSWORD_INCORRECT = "USERNAME_OR_PASSWORD_INCORRECT", 400, "Username or password is incorrect."
