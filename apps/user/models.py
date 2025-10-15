@@ -66,6 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     settings = models.JSONField(default=dict, null=True, blank=True)  # Sửa default thành `dict`
     is_active = models.BooleanField(default=False, blank=True)
     address = models.CharField(max_length=256, null=True, blank=False)
+    phone = models.CharField(max_length=30, null=True, blank=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']  # Bổ sung `email` để `createsuperuser` yêu cầu email

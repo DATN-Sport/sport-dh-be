@@ -21,6 +21,9 @@ class SportCenterViewSet(ModelViewSet):
     ordering_fields = ['name', 'address', 'created_at']
     ordering = ('-created_at',)
 
+    def get_queryset(self):
+        return SportCenter.objects.select_related("owner")
+
     def get_serializer_class(self):
         if self.action in ['create', 'update']:
             return SportCenterSerializer

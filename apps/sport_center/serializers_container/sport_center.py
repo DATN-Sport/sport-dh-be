@@ -2,7 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from apps.sport_center.models import SportCenter, ImageSport
 from apps.user.serializer_container import (
-    Q, serializers, RoleSystemEnum, AppStatus, Response, status, os, settings
+    Q, serializers, RoleSystemEnum, AppStatus, Response, status, os, settings, delete_file
 )
 
 
@@ -18,20 +18,17 @@ def delete_sport_images(instance, instance_model):
         if image_sport.file:
             # Get the full path to the file
             file_path = os.path.join(settings.MEDIA_ROOT, str(image_sport.file))
+            file_path_pr = os.path.join(settings.MEDIA_ROOT, str(image_sport.preview))
 
-            # Delete the file if it exists
-            if os.path.exists(file_path):
-                try:
-                    os.remove(file_path)
-                except OSError as e:
-                    # Log the error but continue with deletion
-                    print(f"Error deleting file {file_path}: {e}")
+            delete_file(file_path)
+            delete_file(file_path_pr)
 
         image_sport.delete()
 
 
 class SportCenterDetailSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
+    owner = serializers.SerializerMethodField()
 
     class Meta:
         model = SportCenter
@@ -40,6 +37,16 @@ class SportCenterDetailSerializer(serializers.ModelSerializer):
     def get_images(self, obj):
         image_map = self.context.get('image_map', {})
         return image_map.get(obj.id, [])
+
+    @staticmethod
+    def get_owner(obj):
+        if obj.owner:
+            return {
+                'id': obj.owner.id,
+                'full_name': obj.owner.full_name,
+                'phone': obj.owner.phone
+            }
+        return {}
 
 
 class SportCenterSerializer(serializers.ModelSerializer):
