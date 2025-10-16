@@ -34,4 +34,4 @@ class RentalSlotSerializer(serializers.ModelSerializer):
         for field, value in validated_data.items():
             setattr(instance, field, value)
         instance.save()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK, data={"detail": "Update RentalSlot successfully"})

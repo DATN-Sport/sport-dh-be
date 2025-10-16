@@ -69,7 +69,7 @@ class UserViewSet(ModelViewSet):
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
         instance = self.get_object()
         instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_200_OK, data={"message": "Deleted"})
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

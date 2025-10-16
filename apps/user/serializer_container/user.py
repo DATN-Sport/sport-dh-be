@@ -30,7 +30,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             validated_data['is_superuser'] = True
 
         instance = super().create({**validated_data, 'password': hashed_password,
-                                   'full_name': validated_data['username'], 'is_active': True})
+                                   'full_name': validated_data['full_name'], 'is_active': True})
         return instance
 
 

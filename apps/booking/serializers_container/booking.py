@@ -158,7 +158,7 @@ class BookingUpdateSerializer(serializers.ModelSerializer):
         if user and user_current.role == RoleSystemEnum.ADMIN.value:
             for field, value in validated_data.items():
                 setattr(instance, field, value)
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK, data={})
         elif user:
             raise serializers.ValidationError(AppStatus.PERMISSION_DENIED.message)
         else:
