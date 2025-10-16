@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from apps.sport_center.models import SportField, ImageSport, SportCenter
 from apps.sport_center.serializers import (
     serializers, SportFieldDetailSerializer, SportFieldSerializer, delete_sport_images
@@ -55,7 +56,9 @@ class SportFieldViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        images = ImageSport.objects.filter(object_id=instance.id).values('id', 'file', 'preview')
+        instance_ct = ContentType.objects.get_for_model(SportField)
+        images = (ImageSport.objects.filter(object_id=instance.id, content_type_id=instance_ct.id)
+                  .values('id', 'file', 'preview'))
         image_map = {}
         for img in images:
             image_info = {
@@ -84,8 +87,9 @@ class SportFieldViewSet(ModelViewSet):
         else:
             sport_field_ids = list(queryset.values_list('id', flat=True))
 
-        images = (ImageSport.objects.filter(object_id__in=sport_field_ids).
-                  values('id', 'object_id', 'file', 'preview'))
+        instance_ct = ContentType.objects.get_for_model(SportField)
+        images = (ImageSport.objects.filter(object_id__in=sport_field_ids, content_type_id=instance_ct.id)
+                  .values('id', 'object_id', 'preview', 'file'))
         image_map = MappingData(obj_images=images).mapping_img()
 
         serializer = self.get_serializer(

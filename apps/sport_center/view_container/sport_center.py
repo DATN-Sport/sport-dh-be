@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from apps.sport_center.models import SportCenter, ImageSport
 from apps.sport_center.serializers import (
     serializers, SportCenterDetailSerializer, SportCenterSerializer, ImageSportDeleteSerializer, delete_sport_images
@@ -20,6 +21,7 @@ class SportCenterViewSet(ModelViewSet):
     filterset_class = SportCenterFilter
     ordering_fields = ['name', 'address', 'created_at']
     ordering = ('-created_at',)
+    instance_ct = ContentType.objects.get_for_model(SportCenter)
 
     def get_queryset(self):
         return SportCenter.objects.select_related("owner")
@@ -55,7 +57,8 @@ class SportCenterViewSet(ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        images = ImageSport.objects.filter(object_id=instance.id).values('id', 'preview', 'file')
+        instance_ct = ContentType.objects.get_for_model(SportCenter)
+        images = ImageSport.objects.filter(object_id=instance.id, content_type_id=instance_ct.id).values('id', 'preview', 'file')
         image_map = {}
         for img in images:
             image_info = {
@@ -83,7 +86,8 @@ class SportCenterViewSet(ModelViewSet):
         else:
             sport_center_ids = list(queryset.values_list('id', flat=True))
 
-        images = (ImageSport.objects.filter(object_id__in=sport_center_ids)
+        instance_ct = ContentType.objects.get_for_model(SportCenter)
+        images = (ImageSport.objects.filter(object_id__in=sport_center_ids, content_type_id=instance_ct.id)
                   .values('id', 'object_id', 'preview', 'file'))
         image_map = MappingData(obj_images=images).mapping_img()
 
