@@ -24,7 +24,7 @@ from rest_framework.fields import (  # NOQA # isort:skip
 
 from apps.utils.utils import delete_file
 from apps.utils.constant_status import AppStatus
-from apps.utils.enum_type import RoleSystemEnum, StatusBookingEnum
+from apps.utils.enum_type import RoleSystemEnum, StatusBookingEnum, StatusFieldEnum
 from apps.utils.validate_data import validate_create_user
 
 

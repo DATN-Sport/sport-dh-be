@@ -5,7 +5,6 @@ from apps.booking.views import (
     RentalSlotViewSet,
     BookingViewSet,
     BookingListTiniViewSet,
-    BookingBulkCreateViewSet
 )
 
 
@@ -19,7 +18,6 @@ urlpatterns = [
     path('rental_slot/', include(rental_slot_router.urls)),
     path('booking/', include(booking_router.urls)),
     path('booking/list/', BookingListTiniViewSet.as_view({'get': 'list'}), name='booking_list'),
-    path('booking/bulk/', BookingBulkCreateViewSet.as_view(), name='booking_bulk_create'),
 
 ]
 
