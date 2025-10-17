@@ -20,6 +20,7 @@ class BookingFilter(filters.FilterSet):
     rental_slot = filters.NumberFilter(field_name='rental_slot')
     price = filters.NumberFilter(field_name='price')
     booking_date = filters.DateFromToRangeFilter(field_name='booking_date')
+    booking_date_ = filters.DateFilter(field_name='booking_date')
     month = filters.NumberFilter(method='filter_by_month')
     year = filters.NumberFilter(method='filter_by_year')
     status = filters.CharFilter(field_name='status', lookup_expr='exact')

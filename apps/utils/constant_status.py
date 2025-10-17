@@ -21,7 +21,9 @@ class AppStatus(Enum):
     OWNER_SPORT_CENTER_MUST_ROLE_OWNER = "OWNER_SPORT_CENTER_MUST_ROLE_OWNER", 400, "Owner sport center must role owner."
 
     SPORT_FIELD_WITH_INFO_EXIST = "SPORT_FIELD_WITH_INFO_EXIST", 400, "Sport field with this info exist."
+    NO_RENTAL_SLOTS_FOUND = "NO_RENTAL_SLOTS_FOUND" , 400, "No rental slots found for these sport types."
     NO_ACTIVE_SPORT_FIELDS_FOUND = "NO_ACTIVE_SPORT_FIELDS_FOUND", 400, "No active sport fields found for this center."
+    NO_VALID_DATES_IN_THIS_MONTH = "NO_VALID_DATES_IN_THIS_MONTH", 400, "No valid dates found for booking in this month."
 
     ENTER_USERNAME_OR_EMAIL = "ENTER_USERNAME_OR_EMAIL", 400, "Please enter the username or email."
     USERNAME_OR_PASSWORD_INCORRECT = "USERNAME_OR_PASSWORD_INCORRECT", 400, "Username or password is incorrect."

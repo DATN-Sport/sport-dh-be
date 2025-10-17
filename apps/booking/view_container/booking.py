@@ -3,13 +3,13 @@ from rest_framework.generics import CreateAPIView
 from apps.booking.models import Booking
 from apps.booking.serializers import (
     serializers, BookingDetailSerializer, BookingCreateSerializer, BookingListTiniSerializer,
-    BookingBulkCreateSerializer, BookingUpdateSerializer
+    BookingBulkCreateSerializer, BookingUpdateSerializer, BookingBulkCreateMonthSerializer
 )
 from apps.booking.view_container.filter import BookingFilter
 from apps.user.view_container import (
     Response, IsUser, ModelViewSet, status, IsOwner,
     LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, RoleSystemEnum,
-    AppStatus
+    AppStatus, action
 )
 
 
@@ -29,9 +29,33 @@ class BookingViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return BookingCreateSerializer
+        if self.action == 'bulk_create_day':
+            return BookingBulkCreateSerializer
+        if self.action == 'bulk_create_month':
+            return BookingBulkCreateMonthSerializer
         elif self.action == 'update':
             return BookingUpdateSerializer
         return BookingDetailSerializer
+
+    @action(detail=False, methods=['post'], url_path='bulk-create-day/')
+    def bulk_create_day(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(
+            {'message': 'Bookings created successfully','data': result},
+            status=status.HTTP_200_OK
+        )
+
+    @action(detail=False, methods=['post'], url_path='bulk-create-month/')
+    def bulk_create_month(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(
+            {'message': f'Bookings created successfully for {result["num_days"]} days','data': result},
+            status=status.HTTP_200_OK
+        )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -80,10 +104,3 @@ class BookingListTiniViewSet(ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-class BookingBulkCreateViewSet(CreateAPIView):
-    permission_classes = [IsOwner]
-    queryset = Booking.objects.all()
-    serializer_class = BookingBulkCreateSerializer
-
