@@ -1,6 +1,6 @@
 from apps.utils.chat_bot import ask_gemini
 from apps.user.view_container import (
-    Response, AllowAny, openapi, APIView, swagger_auto_schema, status, uuid
+    Response, AllowAny, openapi, APIView, swagger_auto_schema, status, uuid, IsUser
 )
 from apps.user.models import User, ChatSession, ChatMessage
 from apps.booking.models import Booking
@@ -8,8 +8,7 @@ from apps.booking.models import Booking
 
 # ---- APIView ----
 class ChatbotViewSet(APIView):
-    authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes = [IsUser]
 
     """
     Chatbot local sử dụng Ollama (phi3-mini)
@@ -62,15 +61,15 @@ class ChatbotViewSet(APIView):
             session_id=session_id or str(uuid.uuid4())
         )
 
-        if user:
-            booking_history = Booking.objects.filter(user=user).order_by("booking_date")[:10]
+        booking_history = Booking.objects.filter(user=user).order_by("booking_date")[:10]
+        booking_history = list(booking_history.values())
 
         history = [
             {"role": msg.role, "content": msg.content}
             for msg in session.messages.order_by("created_at")[:20]
         ]
 
-        answer = ask_gemini(question=question, history=history)
+        answer = ask_gemini(question=question, history=history, booking_history=booking_history)
 
         ChatMessage.objects.create(session=session, role="user", content=question)
         ChatMessage.objects.create(session=session, role="model", content=answer)

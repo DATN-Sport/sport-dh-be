@@ -1,6 +1,8 @@
+import json
+
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyD5UUiMMULL6gzVw77aLO1UbKApQhvOnx4")
+genai.configure(api_key="AIzaSyA8Jc4Jf8Who_4HLGP2T2CLX4cUO1FvN2I")
 
 model = genai.GenerativeModel("gemini-flash-lite-latest")  # model free, nhẹ và nhanh
 
@@ -25,7 +27,7 @@ Khi trả lời:
 Luôn nhớ rằng bạn là trợ lý AI của DaiHiep Sport, mục tiêu là giúp người dùng tìm và đặt sân nhanh nhất có thể.
 """
 
-def ask_gemini(question: str, history=None, data_booking=None) -> str:
+def ask_gemini(question: str, history=None, booking_history=None) -> str:
     if history is None:
         history = []
 
@@ -33,6 +35,13 @@ def ask_gemini(question: str, history=None, data_booking=None) -> str:
 
     # Thêm system context
     messages.append({"role": "user", "parts": [SYSTEM_CONTEXT]})
+    messages.append({
+        "role": "user",
+        "parts": [
+            f"Lịch sử đặt sân của người dùng (4 gần nhất):\n{json.dumps(booking_history, ensure_ascii=False, default=str)}"
+        ]
+    })
+
     messages.append({"role": "model", "parts": ["Đã hiểu. Tôi là chatbot hỗ trợ khách hàng DaiHiep Sport."]})
 
     # Thêm history
