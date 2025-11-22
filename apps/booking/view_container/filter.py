@@ -1,5 +1,6 @@
 from apps.booking.models import RentalSlot, Booking
 from apps.user.view_container import filters
+from datetime import date
 
 
 class RentalSlotFilter(filters.FilterSet):
@@ -28,6 +29,14 @@ class BookingFilter(filters.FilterSet):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.get('request', None)
         super().__init__(*args, **kwargs)
+
+        data = self.data or {}
+        has_any_filter = any(data.values())
+
+        if not has_any_filter:
+            # Gán giá trị mặc định cho booking_date_
+            self.data = self.data.copy()
+            self.data['booking_date_'] = date.today()
 
     def filter_by_month(self, queryset, name, value):
         return queryset.filter(booking_date__month=value)

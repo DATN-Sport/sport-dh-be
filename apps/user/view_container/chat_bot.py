@@ -1,7 +1,9 @@
 from apps.utils.chat_bot import ask_gemini
 from apps.user.view_container import (
-    Response, AllowAny, openapi, APIView, swagger_auto_schema, status
+    Response, AllowAny, openapi, APIView, swagger_auto_schema, status, uuid
 )
+from apps.user.models import User, ChatSession, ChatMessage
+from apps.booking.models import Booking
 
 
 # ---- APIView ----
@@ -26,6 +28,13 @@ class ChatbotViewSet(APIView):
                 openapi.IN_QUERY,
                 description="Câu hỏi hoặc nội dung muốn hỏi chatbot",
                 type=openapi.TYPE_STRING,
+                required=True,
+            ),
+            openapi.Parameter(
+                'session_id',
+                openapi.IN_QUERY,
+                description="Session chatbot",
+                type=openapi.TYPE_STRING,
                 required=False,
             ),
         ],
@@ -44,15 +53,31 @@ class ChatbotViewSet(APIView):
         }
     )
     def post(self, request):
+        user = request.user if request.user.is_authenticated else None
         question = request.data.get("q") or request.query_params.get("q")
-        if not question:
-            return Response(
-                {"error": "Thiếu tham số 'q'"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        session_id = request.data.get("session_id") or request.query_params.get("session_id")
 
-        answer = ask_gemini(question=question)
+        session, _ = ChatSession.objects.get_or_create(
+            user=user,
+            session_id=session_id or str(uuid.uuid4())
+        )
+
+        if user:
+            booking_history = Booking.objects.filter(user=user).order_by("booking_date")[:10]
+
+        history = [
+            {"role": msg.role, "content": msg.content}
+            for msg in session.messages.order_by("created_at")[:20]
+        ]
+
+        answer = ask_gemini(question=question, history=history)
+
+        ChatMessage.objects.create(session=session, role="user", content=question)
+        ChatMessage.objects.create(session=session, role="model", content=answer)
+
         return Response({
+            "session_id": session.session_id,
             "question": question,
             "answer": answer
         })
+

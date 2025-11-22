@@ -42,3 +42,8 @@ class SportTypeEnum(EnumType):
     BADMINTON = "BADMINTON"
     TENNIS = "TENNIS"
     PICK_A_BALL = "PICK_A_BALL"
+
+
+class RoleChatEnum(EnumType):
+    USER = "USER"
+    BOT = "BOT"
