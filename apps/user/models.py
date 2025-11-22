@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager, PermissionsMixin
 
-from apps.utils.enum_type import RoleSystemEnum
+from apps.utils.enum_type import RoleSystemEnum, RoleChatEnum
 
 
 # Custom UserManager class
@@ -101,3 +101,22 @@ class User(AbstractBaseUser, PermissionsMixin):
             "avatar": self.avatar,
             "role": self.role,
         }
+
+
+class ChatSession(models.Model):
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    session_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"ChatSession({self.user.full_name}) - {self.session_id}"
+
+
+class ChatMessage(models.Model):
+    session = models.ForeignKey(ChatSession, related_name="messages", on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=RoleChatEnum.choices())
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.role}: {self.content}"

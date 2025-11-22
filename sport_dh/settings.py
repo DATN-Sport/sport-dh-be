@@ -150,6 +150,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://localhost:5173",
     "http://localhost:5174",
     "https://index-dh.daihiep.click",
@@ -163,6 +164,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # CSRF settings for cookie-based authentication
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://localhost:5173",
     "http://localhost:5174",
     "https://index-dh.daihiep.click",
@@ -182,7 +184,7 @@ EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 578))
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         'apps.depends.cookie_jwt_auth.CookieJWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Fallback for API requests
     ),

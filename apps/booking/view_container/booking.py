@@ -37,6 +37,13 @@ class BookingViewSet(ModelViewSet):
             return BookingUpdateSerializer
         return BookingDetailSerializer
 
+    def get_object(self):
+        booking_id = self.kwargs['pk']
+        booking = Booking.objects.filter(id=booking_id).first()
+        if not booking:
+            raise serializers.ValidationError(AppStatus.INVALID_ID.message)
+        return booking
+
     @action(detail=False, methods=['post'], url_path='bulk-create-day/')
     def bulk_create_day(self, request):
         serializer = self.get_serializer(data=request.data)

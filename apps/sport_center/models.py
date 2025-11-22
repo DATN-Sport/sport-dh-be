@@ -62,7 +62,7 @@ class ImageSport(models.Model):
             self.preview = self.create_preview(self.file)
         super().save(*args, **kwargs)
 
-    def create_preview(self, image_field, max_size=(300, 300), quality=70):
+    def create_preview(self, image_field, max_size=(700, 700), quality=70):
         """
         Args:
             image_field: ImageField object

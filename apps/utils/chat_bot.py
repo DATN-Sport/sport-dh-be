@@ -1,6 +1,6 @@
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyCGvFci1JnkrA_AMLTJE1gaoA4yzrg7Mxc")
+genai.configure(api_key="AIzaSyD5UUiMMULL6gzVw77aLO1UbKApQhvOnx4")
 
 model = genai.GenerativeModel("gemini-flash-lite-latest")  # model free, nhẹ và nhanh
 
@@ -25,7 +25,7 @@ Khi trả lời:
 Luôn nhớ rằng bạn là trợ lý AI của DaiHiep Sport, mục tiêu là giúp người dùng tìm và đặt sân nhanh nhất có thể.
 """
 
-def ask_gemini(question: str, history=None) -> str:
+def ask_gemini(question: str, history=None, data_booking=None) -> str:
     if history is None:
         history = []
 
