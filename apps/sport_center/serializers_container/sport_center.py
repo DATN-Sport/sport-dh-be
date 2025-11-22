@@ -29,10 +29,11 @@ def delete_sport_images(instance, instance_model):
 class SportCenterDetailSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     owner = serializers.SerializerMethodField()
+    total_field = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = SportCenter
-        fields = ['id', 'owner', 'images', 'name', 'address', 'created_at']
+        fields = ['id', 'owner', 'images', 'name', 'address', 'total_field', 'created_at']
 
     def get_images(self, obj):
         image_map = self.context.get('image_map', {})

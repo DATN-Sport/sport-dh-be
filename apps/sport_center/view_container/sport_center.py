@@ -7,7 +7,7 @@ from apps.sport_center.view_container.filter import SportCenterFilter
 from apps.user.view_container import (
     Response, swagger_auto_schema, IsUser, IsOwner, ModelViewSet, status,
     LimitOffsetPagination, MultiPartParser, FormParser, DjangoFilterBackend, OrderingFilter, RoleSystemEnum,
-    AppStatus, openapi, DestroyAPIView
+    AppStatus, openapi, DestroyAPIView, Count
 )
 from apps.utils.mapping_data import MappingData
 
@@ -24,7 +24,11 @@ class SportCenterViewSet(ModelViewSet):
     instance_ct = ContentType.objects.get_for_model(SportCenter)
 
     def get_queryset(self):
-        return SportCenter.objects.select_related("owner")
+        return (
+            SportCenter.objects
+            .select_related("owner")
+            .annotate(total_field=Count("sportfield"))
+        )
 
     def get_serializer_class(self):
         if self.action in ['create', 'update']:
