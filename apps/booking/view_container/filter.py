@@ -17,6 +17,7 @@ class RentalSlotFilter(filters.FilterSet):
 
 
 class BookingFilter(filters.FilterSet):
+    user = filters.UUIDFilter(field_name='user')
     sport_field = filters.NumberFilter(field_name='sport_field')
     rental_slot = filters.NumberFilter(field_name='rental_slot')
     price = filters.NumberFilter(field_name='price')
@@ -46,4 +47,4 @@ class BookingFilter(filters.FilterSet):
 
     class Meta:
         model = Booking
-        fields = ['sport_field', 'rental_slot', 'price', 'booking_date', 'status', 'month', 'year']
+        fields = ['user', 'sport_field', 'rental_slot', 'price', 'booking_date', 'status', 'month', 'year']
