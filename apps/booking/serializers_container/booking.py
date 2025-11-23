@@ -46,6 +46,50 @@ class BookingDetailSerializer(serializers.ModelSerializer):
         return {}
 
 
+class BookingManageDetailSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    sport_field = serializers.SerializerMethodField()
+    rental_slot = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Booking
+        fields = ['id', 'user', 'sport_field', 'rental_slot', 'status', 'price', 'booking_date']
+
+    def get_user(self, obj):
+        if obj.user:
+            return {
+                'id': obj.user.id,
+                'full_name': obj.user.full_name,
+                'email': obj.user.email,
+                'phone': obj.user.phone
+            }
+        return {}
+
+    def get_sport_field(self, obj):
+        if obj.sport_field:
+            return {
+                'sport_center': {
+                    'id': obj.sport_field.sport_center.id,
+                    'name': obj.sport_field.sport_center.name,
+                    'owner': obj.sport_field.sport_center.owner.id,
+                },
+                'id': obj.sport_field.id,
+                'name': obj.sport_field.name,
+                'sport_type': obj.sport_field.sport_type,
+                'address': obj.sport_field.address
+            }
+        return {}
+
+    def get_rental_slot(self, obj):
+        if obj.rental_slot:
+            return {
+                'id': obj.rental_slot.id,
+                'name': obj.rental_slot.name,
+                'time_slot': obj.rental_slot.time_slot,
+            }
+        return {}
+
+
 class BookingListTiniSerializer(serializers.ModelSerializer):
     rental_slot = serializers.SerializerMethodField()
 
