@@ -175,6 +175,16 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_DOMAIN = os.environ.get('CSRF_COOKIE_DOMAIN', None)
 
+# Cookie-based JWT settings
+JWT_ACCESS_TOKEN_COOKIE = 'access_token'
+JWT_REFRESH_TOKEN_COOKIE = 'refresh_token'
+JWT_COOKIE_SECURE = os.environ.get('JWT_COOKIE_SECURE', 'False').lower() == 'true'  # Set to True in production
+JWT_COOKIE_HTTPONLY = True  # Prevents XSS attacks
+JWT_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+JWT_COOKIE_DOMAIN = os.environ.get('JWT_COOKIE_DOMAIN', None)  # Set domain in production
+JWT_COOKIE_PATH = '/'  # Cookie path
+JWT_AUTO_REFRESH = True  # Automatically refresh access token if it's about to expire
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
@@ -262,16 +272,6 @@ SIMPLE_JWT = {
     "CHECK_REVOKE_TOKEN": False,
     "REVOKE_TOKEN_CLAIM": "hash_password",
 }
-
-# Cookie-based JWT settings
-JWT_ACCESS_TOKEN_COOKIE = 'access_token'
-JWT_REFRESH_TOKEN_COOKIE = 'refresh_token'
-JWT_COOKIE_SECURE = os.environ.get('JWT_COOKIE_SECURE', 'False').lower() == 'true'  # Set to True in production
-JWT_COOKIE_HTTPONLY = True  # Prevents XSS attacks
-JWT_COOKIE_SAMESITE = 'None'  # CSRF protection
-JWT_COOKIE_DOMAIN = os.environ.get('JWT_COOKIE_DOMAIN', None)  # Set domain in production
-JWT_COOKIE_PATH = '/'  # Cookie path
-JWT_AUTO_REFRESH = True  # Automatically refresh access token if it's about to expire
 
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 os.makedirs(LOGS_DIR, exist_ok=True)

@@ -12,7 +12,7 @@ from apps.user.view_container import (
 
 
 class BookingManageViewSet(ModelViewSet):
-    permission_classes = [IsOwner]
+    permission_classes = [IsUser]
     queryset = Booking.objects.all()
     pagination_class = LimitOffsetPagination
     parser_classes = [MultiPartParser, FormParser]
@@ -32,7 +32,8 @@ class BookingManageViewSet(ModelViewSet):
 
         if user.role == RoleSystemEnum.OWNER.value:
             qs = qs.filter(sport_field__sport_center__owner=user)
-
+        elif user.role == RoleSystemEnum.USER.value:
+            qs = qs.filter(user=user)
         return qs
 
     def get_serializer_class(self):
