@@ -192,6 +192,12 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 578))
 
+# AI LL/ML Service
+FPT_API_KEY = os.environ.get('FPT_API_KEY')
+FPT_URL_API = os.environ.get('FPT_URL_API')
+FPT_MODEL_NAME = os.environ.get('FPT_MODEL_NAME')
+CHAT_LIMIT_PER_MINUTE = int(os.environ.get('CHAT_LIMIT_PER_MINUTE', 20))
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.BasicAuthentication',
