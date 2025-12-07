@@ -1,13 +1,17 @@
 from django_ratelimit.decorators import ratelimit
 
-from apps.utils.chat_bot import ask_fpt
+from apps.utils.chat_bot import (
+    analyze_question,
+    ask_fpt,
+    build_missing_message,
+    fetch_intent_data,
+)
 from apps.user.view_container import (
-    Response, AllowAny, openapi, APIView, swagger_auto_schema, status, uuid, IsUser
+    Response, openapi, APIView, swagger_auto_schema, status, uuid, IsUser
 )
 
 from django.utils.decorators import method_decorator
 from apps.user.models import User, ChatSession, ChatMessage
-from apps.booking.models import Booking
 from django.conf import settings as st
 
 
@@ -67,35 +71,24 @@ class ChatbotViewSet(APIView):
             session_id=session_id or str(uuid.uuid4())
         )
 
-        booking_history_qs = Booking.objects.filter(user=user).select_related(
-            "sport_field",
-            "sport_field__sport_center",
-            "rental_slot"
-        ).order_by("booking_date")[:10]
+        analysis = analyze_question(question)
 
-        booking_history = []
-        for booking in booking_history_qs:
-            sport_field = booking.sport_field
-            sport_center = sport_field.sport_center if sport_field else None
-            booking_history.append({
-                "id": booking.id,
-                "price": booking.price,
-                "booking_date": booking.booking_date.isoformat() if booking.booking_date else None,
-                "status": booking.status,
-                "rental_slot": booking.rental_slot.time_slot if booking.rental_slot else None,
-                "sport_field": {
-                    "id": sport_field.id,
-                    "name": sport_field.name,
-                    "address": sport_field.address,
-                    "sport_type": sport_field.sport_type,
-                    "sport_center": {
-                        "id": sport_center.id,
-                        "name": sport_center.name,
-                    } if sport_center else None,
-                } if sport_field else None,
-            })
-
-        answer = ask_fpt(question=question, booking_history=booking_history)
+        if analysis["missing"]:
+            answer = ask_fpt(
+                question=question,
+                intent=analysis["intent"],
+                params=analysis["params"],
+                missing=analysis["missing"],
+                stage="analyze",
+            )
+        else:
+            data_summary = fetch_intent_data(analysis["intent"], analysis["params"], user)
+            answer = ask_fpt(
+                question=question,
+                intent=analysis["intent"],
+                params=analysis["params"],
+                data_summary=data_summary,
+            )
 
         ChatMessage.objects.create(session=session, role="user", content=question)
         ChatMessage.objects.create(session=session, role="model", content=answer)
