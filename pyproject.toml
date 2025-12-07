@@ -8,7 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-django = "^5.2.4"
+Django = "5.2.5"
 djangorestframework = "^3.16.0"
 python-dotenv = "^1.1.1"
 djangorestframework-simplejwt = "^5.5.0"
@@ -19,6 +19,8 @@ django-ratelimit = "^4.1.0"
 django_filter = "25.2"
 pillow = "11.3.0"
 google-generativeai = "0.8.5"
+openai = "2.9.0"
+django-ratelimit = "4.1.0"
 
 [build-system]
 requires = ["poetry-core"]

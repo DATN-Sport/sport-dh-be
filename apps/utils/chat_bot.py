@@ -1,10 +1,9 @@
+from django.conf import settings
+from openai import OpenAI
 import json
 
-import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyA8Jc4Jf8Who_4HLGP2T2CLX4cUO1FvN2I")
-
-model = genai.GenerativeModel("gemini-flash-lite-latest")  # model free, nhẹ và nhanh
+client = OpenAI(api_key=settings.FPT_API_KEY, base_url=settings.FPT_URL_API)
 
 SYSTEM_CONTEXT = """
 Bạn là chatbot hỗ trợ khách hàng của trang web DaiHiep Sport.
@@ -20,40 +19,44 @@ Người dùng có thể:
 Khi trả lời:
 - Giữ phong cách thân thiện, tự nhiên, không quá máy móc
 - Ưu tiên trả lời ngắn gọn, rõ ràng
-- Nếu người dùng hỏi chung chung (ví dụ “cho tôi tìm sân trống tối nay”), hãy hỏi lại để làm rõ thông tin cần thiết (môn thể thao, khu vực, giờ cụ thể, v.v.)
-- Nếu có thể, hãy gợi ý tính năng để họ khám phá thêm (ví dụ: “bạn có thể dùng chức năng lọc theo khu vực để xem nhanh các sân gần nhất”)
+- Nếu người dùng hỏi chung chung (ví dụ “cho tôi tìm sân trống tối nay”), hãy hỏi lại để làm rõ thông tin cần thiết
 - Không trả lời ngoài phạm vi thể thao hoặc dịch vụ đặt sân
 
-Luôn nhớ rằng bạn là trợ lý AI của DaiHiep Sport, mục tiêu là giúp người dùng tìm và đặt sân nhanh nhất có thể.
+Luôn nhớ rằng bạn là trợ lý AI của DaiHiep Sport.
+
+Khi bạn nhận thêm dữ liệu `booking_history`, đó là danh sách các booking gần nhất gồm các trường:
+ - `id`: mã booking
+ - `price`: giá booking
+ - `booking_date`: ngày booking
+ - `status`: trạng thái booking (PENDING/CONFIRMED/COMPLETED/CANCELLED)
+ - `rental_slot`: thông tin khung giờ gồm `time_slot`
+ - `sport_field`: thông tin sân gồm `id`, `name`, `address`, `sport_type`, và `sport_center`
+ - `sport_center`: thông tin trung tâm trong `sport_field` gồm `id`, `name`
 """
 
-def ask_gemini(question: str, history=None, booking_history=None) -> str:
-    if history is None:
-        history = []
+def ask_fpt(question: str, booking_history=None) -> str:
+    if booking_history is None:
+        booking_history = []
 
-    messages = []
-
-    # Thêm system context
-    messages.append({"role": "user", "parts": [SYSTEM_CONTEXT]})
-    messages.append({
-        "role": "user",
-        "parts": [
-            f"Lịch sử đặt sân của người dùng (4 gần nhất):\n{json.dumps(booking_history, ensure_ascii=False, default=str)}"
-        ]
-    })
-
-    messages.append({"role": "model", "parts": ["Đã hiểu. Tôi là chatbot hỗ trợ khách hàng DaiHiep Sport."]})
-
-    # Thêm history
-    for msg in history:
-        messages.append({"role": msg["role"], "parts": [msg["content"]]})
-
-    # Thêm câu hỏi mới
-    messages.append({"role": "user", "parts": [question]})
+    messages = [
+        {"role": "system", "content": SYSTEM_CONTEXT},
+        {"role": "system", "content": f"Lịch sử đặt sân (gần nhất): {json.dumps(booking_history, ensure_ascii=False, default=str)}"},
+        {"role": "assistant", "content": "Đã hiểu. Tôi là chatbot hỗ trợ khách hàng DaiHiep Sport."}]
+    # user message
+    messages.append({"role": "user", "content": question})
 
     try:
-        response = model.generate_content(messages)
-        return response.text
+        resp = client.chat.completions.create(
+            model=settings.FPT_MODEL_NAME,
+            messages=messages,
+            temperature=0.8,
+            max_tokens=2048,
+            top_p=1,
+            presence_penalty=0,
+            frequency_penalty=0
+        )
+
+        return resp.choices[0].message.content
+
     except Exception as e:
         return f"Lỗi khi gọi chatbot: {e}"
-
