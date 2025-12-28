@@ -21,6 +21,7 @@ pillow = "11.3.0"
 google-generativeai = "0.8.5"
 openai = "2.9.0"
 django-ratelimit = "4.1.0"
+psycopg2-binary="2.9.11"
 
 [build-system]
 requires = ["poetry-core"]

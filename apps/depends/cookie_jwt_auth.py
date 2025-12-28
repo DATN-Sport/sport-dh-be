@@ -1,6 +1,7 @@
 """
 Cookie-based JWT Authentication for Django REST Framework
 """
+import uuid
 from django.conf import settings
 from django.utils.module_loading import import_string
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -71,6 +72,12 @@ class CookieJWTAuthentication(JWTAuthentication):
             raise InvalidToken('Token contained no recognizable user identification')
 
         try:
+            if isinstance(user_id, str):
+                user_id = uuid.UUID(user_id)
+        except (ValueError, TypeError):
+            raise InvalidToken('Invalid user ID format')
+
+        try:
             user = self.user_model.objects.get(**{settings.SIMPLE_JWT['USER_ID_FIELD']: user_id})
         except self.user_model.DoesNotExist:
             raise InvalidToken('User not found')
@@ -127,6 +134,12 @@ class CookieRefreshJWTAuthentication(JWTAuthentication):
             user_id = validated_token[settings.SIMPLE_JWT['USER_ID_CLAIM']]
         except KeyError:
             raise InvalidToken('Token contained no recognizable user identification')
+
+        try:
+            if isinstance(user_id, str):
+                user_id = uuid.UUID(user_id)
+        except (ValueError, TypeError):
+            raise InvalidToken('Invalid user ID format')
 
         try:
             user = self.user_model.objects.get(**{settings.SIMPLE_JWT['USER_ID_FIELD']: user_id})
