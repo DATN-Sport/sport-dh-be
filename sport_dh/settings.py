@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.user',
     'apps.sport_center',
     'apps.booking',
+    'apps.chat',
     'apps.fake_data',
 ]
 
