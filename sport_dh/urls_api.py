@@ -11,4 +11,6 @@ urlpatterns = [
     path('', include('apps.user.urls')),
     path('', include('apps.sport_center.urls')),
     path('', include('apps.booking.urls')),
+    path('', include('apps.chat.urls')),
+    path('fake_data/', include('apps.fake_data.urls')),
 ]
