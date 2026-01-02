@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.user',
     'apps.sport_center',
     'apps.booking',
+    'apps.fake_data',
 ]
 
 MIDDLEWARE = [

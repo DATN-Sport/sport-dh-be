@@ -53,7 +53,10 @@ class BookingFilter(filters.FilterSet):
 
 
 class BookingManageFilter(filters.FilterSet):
-    user = filters.UUIDFilter(field_name='user')
+    user = filters.CharFilter(
+        field_name='user__email',
+        lookup_expr='iexact'
+    )
     owner = filters.UUIDFilter(field_name="sport_field__sport_center__owner")
     sport_center = filters.NumberFilter(field_name="sport_field__sport_center")
     sport_field = filters.NumberFilter(field_name='sport_field')
