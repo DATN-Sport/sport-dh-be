@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from apps.booking.view_container.stats import BookingStatsView
+from apps.booking.view_container.booking_available import BookingAvailableView
 from apps.booking.views import (
     RentalSlotViewSet,
     BookingViewSet,
@@ -24,6 +25,7 @@ urlpatterns = [
     path('booking_manage/', include(booking_manage_router.urls)),
     path('booking/list/', BookingListTiniViewSet.as_view({'get': 'list'}), name='booking_list'),
     path('booking/stats/', BookingStatsView.as_view(), name='booking_stats'),
+    path('booking/available/', BookingAvailableView.as_view(), name='booking_available'),
 
 
 ]

@@ -14,7 +14,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from apps.depends.oauth2 import IsUser
 from apps.chat.models import ChatSession, ChatMessage
-from apps.chat.services import ask_chatbot, build_command_context
+from apps.chat.services import ask_chatbot, get_available_bookings, parse_user_booking_intent, create_booking_from_intent
 from apps.booking.models import Booking
 
 
@@ -103,17 +103,22 @@ class ChatbotViewSet(APIView):
             try:
                 # Tìm session theo session_id
                 session = ChatSession.objects.get(session_id=session_id)
-                # Kiểm tra quyền: user chỉ có thể truy cập session của chính mình
+                # Kiểm tra quyền: nếu user không khớp, tạo session mới (user đã đổi tài khoản)
                 if user and session.user and session.user != user:
-                    return Response(
-                        {"error": "Không có quyền truy cập session này"},
-                        status=status.HTTP_403_FORBIDDEN
+                    # User đã đổi tài khoản, tạo session mới
+                    session = ChatSession.objects.create(
+                        user=user,
+                        session_id=uuid.uuid4()
                     )
+                elif user and not session.user:
+                    # Session cũ là anonymous, gán user mới vào
+                    session.user = user
+                    session.save()
             except ChatSession.DoesNotExist:
                 # Nếu không tìm thấy, tạo session mới
                 session = ChatSession.objects.create(
                     user=user,
-                    session_id=session_id
+                    session_id=uuid.uuid4()
                 )
         else:
             # Tạo session mới
@@ -121,48 +126,43 @@ class ChatbotViewSet(APIView):
                 user=user,
                 session_id=uuid.uuid4()
             )
-        
-        # Lấy booking history của user (nếu đã đăng nhập)
-        booking_history = []
-        if user:
-            booking_history_qs = Booking.objects.filter(user=user).select_related(
-                "sport_field",
-                "sport_field__sport_center",
-                "rental_slot"
-            ).order_by("-booking_date")[:10]
-            
-            for booking in booking_history_qs:
-                sport_field = booking.sport_field
-                sport_center = sport_field.sport_center if sport_field else None
-                booking_history.append({
-                    "id": str(booking.id),
-                    "price": booking.price,
-                    "booking_date": booking.booking_date.isoformat() if booking.booking_date else None,
-                    "status": booking.status,
-                    "rental_slot": booking.rental_slot.time_slot if booking.rental_slot else None,
-                    "sport_field": {
-                        "id": str(sport_field.id) if sport_field else None,
-                        "name": sport_field.name if sport_field else None,
-                        "address": sport_field.address if sport_field else None,
-                        "sport_type": sport_field.sport_type if sport_field else None,
-                        "sport_center": {
-                            "id": str(sport_center.id) if sport_center else None,
-                            "name": sport_center.name if sport_center else None,
-                        } if sport_center else None,
-                    } if sport_field else None,
-                })
-        
-        # Gọi chatbot service với chat history
-        command_context = build_command_context(question, user, booking_history)
-        question_for_ai = command_context.ai_prompt if command_context else question
-        system_messages = command_context.system_messages if command_context else None
 
-        answer = ask_chatbot(
-            question=question_for_ai,
-            session=session,
-            booking_history=booking_history if booking_history else None,
-            command_context=system_messages,
-        )
+        
+        # Lấy dữ liệu booking available (sân trống) - luôn lấy để chatbot có thể trả lời
+        available_bookings = get_available_bookings()
+        
+        # Kiểm tra xem user có muốn đặt sân không (parse từ câu hỏi)
+        booking_intent = None
+        if user:
+            booking_intent = parse_user_booking_intent(question, available_bookings)
+        
+        # Nếu có booking intent, xử lý đặt sân trực tiếp
+        if booking_intent and user:
+            booking_result = create_booking_from_intent(user, booking_intent)
+            
+            if booking_result.get('success'):
+                answer = (
+                    f"✅ Đã đặt sân thành công {booking_result.get('booking_id')}!\n\n"
+                    f"📅 Sân: {booking_result.get('sport_field_name')}\n"
+                    f"🏟️ Trung tâm: {booking_result.get('center_name')}\n"
+                    f"📆 Ngày: {booking_result.get('booking_date')}\n"
+                    f"⏰ Khung giờ: {booking_result.get('rental_slot')}\n"
+                    f"💰 Giá: {booking_result.get('price'):,.0f}đ\n\n"
+                    f"Cảm ơn bạn đã sử dụng dịch vụ!"
+                )
+            else:
+                error_msg = booking_result.get('error', 'Không thể đặt sân')
+                answer = f"❌ {error_msg}\n\nVui lòng kiểm tra lại thông tin hoặc chọn khung giờ khác."
+        else:
+            # Gọi chatbot service với chat history và available bookings
+            answer = ask_chatbot(
+                question=question,
+                session=session,
+                booking_history=None,
+                available_bookings=available_bookings,
+                command_context=None,
+                user=user,
+            )
         
         # Lưu message vào database
         ChatMessage.objects.create(session=session, role="user", content=question)
